@@ -1,5 +1,5 @@
-title: "Deploy a containerized Theia instance on OCI"
-description: "Deploy containerized Theia & MySQL on OCI using a single compute instance. "
+title: "Deploy a containerized RStudio instance on OCI"
+description: "Deploy containerized RStudio & MySQL on OCI using a single compute instance. "
 schemaVersion: 1.1.0
 version: "20190304"
 locale: "en"
@@ -11,20 +11,12 @@ variableGroups:
   - tenancy_ocid
   - region
 
-- title: Theia Configuration
+- title: R-Studio Configuration
   visible: true  
   variables:
+    - rstudio_user
+    - rstudio_password
     - show_advanced
-
-- title: MySQL Configuration
-  visible: 
-      and:
-        - show_advanced  
-  variables:
-    - mysql_root_password
-    - nc_db_user
-    - nc_db_password
-    - nc_schema
 
 
 
@@ -53,23 +45,23 @@ variableGroups:
 outputGroups:
 - title: Service Endpoints
   outputs:
-    - theia_public_ip
+    - rstudio_public_ip
 - title: Generated Passwords
   outputs:
     - generated_ssh_private_key
 
 outputs:
-  theia_public_ip:
+  rstudio_public_ip:
     type: link
-    title: Your Theia website
-    description: Open Theia website
+    title: RStudio Login
+    description: Open R-Studio
   generated_ssh_private_key:
     title: "Generated SSH Private Key"
     description: "Generated SSH Private Key"
     type: copyableString
     visible: true
 
-primaryOutputButton: theia_public_ip
+primaryOutputButton: rstudio_public_ip
 
 variables:
 
@@ -80,47 +72,28 @@ variables:
     visible: true
     default: false
 
-# MySQL
-  mysql_root_password:
-    type: password
-    required: false
-    visible: 
-      and:
-        - show_advanced
-    title: "MySQL admin password"
-    description: "Choose the password that will be set for the MySQL root superuser account."
-    pattern: "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()_+\\-=\\[\\]{};':\\\"\\\\|,.<>\\/?]).{8,32}$"
 
-  nc_db_user:
+
+  rstudio_user:
     type: string
     required: false
-    title: "Theia database username"
-    description: "The username that Theia uses to connect to the MySQL database."
+    title: "R-Studio username"
+    description: "The username to login to R-Studio."
     minLength: 2
     maxLength: 14
     pattern: "^[a-zA-Z][a-zA-Z0-9]+$"
-    visible: 
-      and:
-        - show_advanced
+    visible: true
+     
 
-  nc_db_password:
+  rstudio_password:
     type: password
     required: false
-    title: "Theia database password"
-    description: "Password for Theia to connect to the MySQL database."
+    title: "R-Studio password"
+    description: "Password for the R-Studio user above."
     #pattern: "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()_+\\-=\\[\\]{};':\\\"\\\\|,.<>\\/?]).{8,32}$"
-    visible: 
-      and:
-        - show_advanced
+    visible: true
+      
 
-  nc_schema:
-    type: string
-    required: false
-    title: "MySQL schema to be used by Theia"
-    description: "The MySQL Schema/Database for Theia."
-    visible: 
-      and:
-        - show_advanced
 
 # Network
   vcn:
@@ -130,7 +103,7 @@ variables:
         - show_advanced
     required: true
     title: "VCN name"
-    description: "Type VCN name where your Theia will be deployed."
+    description: "Type VCN name where your RStudio will be deployed."
 
   vcn_cidr:
     type: string
@@ -140,7 +113,7 @@ variables:
     required: false
     pattern: "^(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9]).(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9]).(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9]).(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])\\/(3[0-2]|[1-2]?[0-9])$"
     title: "VCN CIDR"
-    description: "Choose VCN CIDR for your Theia deployment."
+    description: "Choose VCN CIDR for your RStudio deployment."
 
 # Instance 
   compartment_ocid:
@@ -150,7 +123,7 @@ variables:
       and:
         - show_advanced
     title: "Compartment"
-    description: "Compartment where your Theia will be deployed."
+    description: "Compartment where your RStudio will be deployed."
 
   availability_domain_name:
     type: oci:identity:availabilitydomain:name
@@ -159,7 +132,7 @@ variables:
       and:
         - show_advanced
     title: "Availability Domain to be chosen"
-    description: "Choose Availability Domain where your Theia will be deployed."
+    description: "Choose Availability Domain where your RStudio will be deployed."
     dependsOn:
       regionName: ${region}
       compartmentId: ${compartment_ocid}
@@ -170,8 +143,8 @@ variables:
     visible: 
       and:
         - show_advanced
-    title: "Theia node shape"
-    description: "Choose Instance Shape for Theia host."
+    title: "RStudio node shape"
+    description: "Choose Instance Shape for RStudio host."
     default: "VM.Standard2.1"
     dependsOn:
       compartmentId: ${compartment_ocid}
@@ -183,7 +156,7 @@ variables:
       and:
         - show_advanced
     title: "Instance OS"
-    description: "An Operating System that determines the operating system for Theia host."
+    description: "An Operating System that determines the operating system for RStudio host."
     default: "Oracle Linux"
     enum:
       - "Oracle Linux"
@@ -195,7 +168,7 @@ variables:
       and:
         - show_advanced
     title: "Instance OS version"
-    description: "An Operating System version that determines the operating system version for Theia host."
+    description: "An Operating System version that determines the operating system version for RStudio host."
     default: "7.8"
     enum:
       - "7.8"
@@ -204,8 +177,8 @@ variables:
     type: string
     required: false
     visible: false
-    title: "Theia Hostname Prefix"
-    description: "Type Theia Hostname Prefix."
+    title: "RStudio Hostname Prefix"
+    description: "Type RStudio Hostname Prefix."
 
   
 

@@ -1,0 +1,16 @@
+version: '3'
+
+volumes:
+  rstudio-workspace:
+
+services:
+  rstudio:
+    image: rocker/rstudio:4.0.3
+    restart: always
+    ports:
+      - 80:8787
+    volumes:
+      - rstudio-workspace:/home/rstudio/workspace
+    environment:
+      - USER=${rstudio_user}
+      - PASSWORD=${rstudio_password}

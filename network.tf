@@ -15,7 +15,7 @@ resource "oci_core_internet_gateway" "internet_gateway" {
 resource "oci_core_route_table" "public_route_table" {
   compartment_id = var.compartment_ocid
   vcn_id = oci_core_virtual_network.wpmdsvcn.id
-  display_name = "RouteTableForTheia"
+  display_name = "RouteTableForRStudio"
   route_rules {
     cidr_block = "0.0.0.0/0"
     network_entity_id = oci_core_internet_gateway.internet_gateway.id
@@ -25,7 +25,7 @@ resource "oci_core_route_table" "public_route_table" {
 
 resource "oci_core_security_list" "public_security_list" {
   compartment_id = var.compartment_ocid
-  display_name = "Allow Public SSH Connections to Theia"
+  display_name = "Allow Public SSH Connections to RStudio"
   vcn_id = oci_core_virtual_network.wpmdsvcn.id
   egress_security_rules {
     destination = "0.0.0.0/0"
@@ -43,7 +43,7 @@ resource "oci_core_security_list" "public_security_list" {
 
 resource "oci_core_security_list" "public_security_list_http" {
   compartment_id = var.compartment_ocid
-  display_name = "Allow HTTP(S) to Theia"
+  display_name = "Allow HTTP(S) to RStudio"
   vcn_id = oci_core_virtual_network.wpmdsvcn.id
   egress_security_rules {
     destination = "0.0.0.0/0"

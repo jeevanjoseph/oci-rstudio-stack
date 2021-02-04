@@ -4,7 +4,7 @@
 
 - Permission to `manage` the following types of resources in your Oracle Cloud Infrastructure tenancy: `vcns`, `internet-gateways`, `route-tables`, `security-lists`, `subnets` and `instances`.
 
-- Quota to create the following resources: 1 VCN, 1 subnet, 1 Internet Gateway, and 1 compute instance (Theia CMS).
+- Quota to create the following resources: 1 VCN, 1 subnet, 1 Internet Gateway, and 1 compute instance (RStudio CMS).
 
 If you don't have the required permissions and quota, contact your tenancy administrator. See [Policy Reference](https://docs.cloud.oracle.com/en-us/iaas/Content/Identity/Reference/policyreference.htm), [Service Limits](https://docs.cloud.oracle.com/en-us/iaas/Content/General/Concepts/servicelimits.htm), [Compartment Quotas](https://docs.cloud.oracle.com/iaas/Content/General/Concepts/resourcequotas.htm).
 
@@ -52,11 +52,11 @@ Run the following commands:
 
 
 ### Testing your Deployment
-After the deployment is finished, you can access WP-Admin by picking theia_wp-admin_url output and pasting into web browser window. You can also verify initial content of your blog by using theia_public_ip:
+After the deployment is finished, you can access WP-Admin by picking theia_wp-admin_url output and pasting into web browser window. You can also verify initial content of your blog by using rstudio_public_ip:
 
 ````
 theia_wp-admin_url = http://193.122.198.19/wp-admin/
-theia_public_ip = 193.122.198.19
+rstudio_public_ip = 193.122.198.19
 `````
 
 ### Destroy the Deployment

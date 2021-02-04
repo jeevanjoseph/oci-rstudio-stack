@@ -1,5 +1,5 @@
-output "theia_public_ip" {
-  value = "http://${oci_core_public_ip.Theia_public_ip.ip_address}"
+output "rstudio_public_ip" {
+  value = "http://${oci_core_public_ip.RStudio_public_ip.ip_address}"
 }
 
 

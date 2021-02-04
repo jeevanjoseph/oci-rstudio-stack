@@ -47,25 +47,14 @@ variable "public_ssh_key" {
   default = ""
 }
 
-# MySQL
+# RStudio
 
-variable "mysql_root_password" {
-  description = "specifies the password that will be set for the MySQL root superuser account."
-  default     = "MySQLPassw0rd!"
-}
-
-
-variable "nc_db_user" {
-  description = "The username that Theia uses to connect to the MySQL database."
+variable "rstudio_user" {
+  description = "The username that RStudio uses to connect to the MySQL database."
   default     = "theia"  
 }
 
-variable "nc_db_password" {
-  description = "Password for Theia to connect to the MySQL database."
+variable "rstudio_password" {
+  description = "Password for RStudio to connect to the MySQL database."
   default     = "MyWPpassw0rd!"  
-}
-
-variable "nc_schema" {
-  description = "Theia MySQL Schema"
-  default     = "theia"  
 }

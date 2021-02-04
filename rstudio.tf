@@ -1,25 +1,20 @@
 
 data "template_file" "theia-docker-compose" {
-  template = file("${path.module}/scripts/theia.yaml")
+  template = file("${path.module}/scripts/rstudio.yaml")
 
   vars = {
     public_key_openssh  = tls_private_key.public_private_key_pair.public_key_openssh,
-    mysql_root_password = var.mysql_root_password,
-    nc_schema           = var.nc_schema,
-    nc_db_user          = var.nc_db_user,
-    nc_db_password      = var.nc_db_password
+    rstudio_user          = var.rstudio_user,
+    rstudio_password      = var.rstudio_password
   }
 }
 
-data "template_file" "nginx-conf" {
-  template = file("${path.module}/scripts/nginx.conf")
-}
 
 
-resource "oci_core_instance" "Theia" {
+resource "oci_core_instance" "RStudio" {
   availability_domain = local.availability_domain_name
   compartment_id      = var.compartment_ocid
-  display_name        = "Theia"
+  display_name        = "RStudio"
   shape               = var.node_shape
 
   create_vnic_details {
@@ -40,52 +35,37 @@ resource "oci_core_instance" "Theia" {
 
 }
 
-data "oci_core_vnic_attachments" "Theia_vnics" {
+data "oci_core_vnic_attachments" "RStudio_vnics" {
   compartment_id      = var.compartment_ocid
   availability_domain = local.availability_domain_name
-  instance_id         = oci_core_instance.Theia.id
+  instance_id         = oci_core_instance.RStudio.id
 }
 
-data "oci_core_vnic" "Theia_vnic1" {
-  vnic_id = data.oci_core_vnic_attachments.Theia_vnics.vnic_attachments[0]["vnic_id"]
+data "oci_core_vnic" "RStudio_vnic1" {
+  vnic_id = data.oci_core_vnic_attachments.RStudio_vnics.vnic_attachments[0]["vnic_id"]
 }
 
-data "oci_core_private_ips" "Theia_private_ips1" {
-  vnic_id = data.oci_core_vnic.Theia_vnic1.id
+data "oci_core_private_ips" "RStudio_private_ips1" {
+  vnic_id = data.oci_core_vnic.RStudio_vnic1.id
 }
 
-resource "oci_core_public_ip" "Theia_public_ip" {
+resource "oci_core_public_ip" "RStudio_public_ip" {
   compartment_id = var.compartment_ocid
-  display_name   = "Theia_public_ip"
+  display_name   = "RStudio_public_ip"
   lifetime       = "RESERVED"
-  private_ip_id  = data.oci_core_private_ips.Theia_private_ips1.private_ips[0]["id"]
+  private_ip_id  = data.oci_core_private_ips.RStudio_private_ips1.private_ips[0]["id"]
 }
 
-resource "null_resource" "Theia_provisioner" {
-  depends_on = [oci_core_instance.Theia, oci_core_public_ip.Theia_public_ip]
+resource "null_resource" "RStudio_provisioner" {
+  depends_on = [oci_core_instance.RStudio, oci_core_public_ip.RStudio_public_ip]
 
   provisioner "file" {
     content     = data.template_file.theia-docker-compose.rendered
-    destination = "/home/opc/theia.yaml"
+    destination = "/home/opc/rstudio.yaml"
 
     connection {
       type        = "ssh"
-      host        = oci_core_public_ip.Theia_public_ip.ip_address
-      agent       = false
-      timeout     = "5m"
-      user        = "opc"
-      private_key = tls_private_key.public_private_key_pair.private_key_pem
-
-    }
-  }
-
-  provisioner "file" {
-    content     = data.template_file.nginx-conf.rendered
-    destination = "/home/opc/nginx.conf"
-
-    connection {
-      type        = "ssh"
-      host        = oci_core_public_ip.Theia_public_ip.ip_address
+      host        = oci_core_public_ip.RStudio_public_ip.ip_address
       agent       = false
       timeout     = "5m"
       user        = "opc"
@@ -97,7 +77,7 @@ resource "null_resource" "Theia_provisioner" {
   provisioner "remote-exec" {
     connection {
       type        = "ssh"
-      host        = oci_core_public_ip.Theia_public_ip.ip_address
+      host        = oci_core_public_ip.RStudio_public_ip.ip_address
       agent       = false
       timeout     = "5m"
       user        = "opc"
@@ -107,7 +87,7 @@ resource "null_resource" "Theia_provisioner" {
 
     inline = [
       "while [ ! -f /tmp/cloud-init-complete ]; do sleep 2; done",
-      "docker run  --init --detach -p 80:3000 -v theia-workspace:/home/project:cached theiaide/theia:next"
+      "docker-compose -f /home/opc/rstudio.yaml up -d"
     ]
 
   }
