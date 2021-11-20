@@ -69,7 +69,7 @@ variables:
     type: boolean
     title: "Show advanced options?"
     description: "Shows advanced options."
-    visible: true
+    visible: false
     default: false
 
 

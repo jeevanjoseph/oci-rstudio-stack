@@ -51,10 +51,10 @@ variable "public_ssh_key" {
 
 variable "rstudio_user" {
   description = "The username that RStudio uses to connect to the MySQL database."
-  default     = "theia"  
+  default     = "admin"  
 }
 
 variable "rstudio_password" {
   description = "Password for RStudio to connect to the MySQL database."
-  default     = "MyWPpassw0rd!"  
+  default     = "MyPassw0rd!"  
 }
