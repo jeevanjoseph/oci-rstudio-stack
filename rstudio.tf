@@ -15,7 +15,7 @@ resource "oci_core_instance" "RStudio" {
   availability_domain = local.availability_domain_name
   compartment_id      = var.compartment_ocid
   display_name        = "RStudio"
-  shape               = var.node_shape
+  shape               = local.instance_shape
 
   create_vnic_details {
     subnet_id        = oci_core_subnet.public.id
@@ -97,4 +97,7 @@ resource "null_resource" "RStudio_provisioner" {
 
 locals {
   availability_domain_name = var.availability_domain_name != null ? var.availability_domain_name : data.oci_identity_availability_domains.ADs.availability_domains[0].name
+  instance_shape             = var.instance_shape != null ? var.instance_shape : data.oci_core_shapes.matched_shapes.shapes[0].name
+  flexible_shape_regex       = "VM.Standard.E[3-9].Flex"
+  is_flexible_instance_shape = length(regexall("VM.Standard.E[0-9].Flex", local.instance_shape)) > 0
 }

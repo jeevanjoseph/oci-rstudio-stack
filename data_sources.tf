@@ -16,3 +16,18 @@ data "oci_identity_availability_domains" "ADs" {
 
 }
 
+data "oci_core_shapes" "matched_shapes" {
+  compartment_id           = var.compartment_ocid
+  availability_domain      = local.availability_domain_name
+
+  # filter{
+  #   name = "name"
+  #   values = local.compute_flexible_shapes
+  # }
+
+  filter{
+    name = "name"
+    values = [local.flexible_shape_regex]
+    regex= true
+  }
+}

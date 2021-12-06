@@ -22,8 +22,8 @@ variable "vcn_cidr" {
 
 ## Instance
 
-variable "node_shape" {
-  default     = "VM.Standard.E2.1"
+variable "instance_shape" {
+  default     = null
 }
 
 variable "label_prefix" {
@@ -56,5 +56,4 @@ variable "rstudio_user" {
 
 variable "rstudio_password" {
   description = "Password for RStudio to connect to the MySQL database."
-  default     = "MyPassw0rd!"  
 }

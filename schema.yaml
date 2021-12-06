@@ -1,17 +1,17 @@
 title: "Deploy a containerized RStudio instance on OCI"
-description: "Deploy containerized RStudio & MySQL on OCI using a single compute instance. "
+description: ${Messages.solutionsHub.solutions.rstudio.longDescription()}
 schemaVersion: 1.1.0
 version: "20190304"
 locale: "en"
 
 variableGroups:
-- title: General Configuration
+- title: ${Messages.solutionsHub.generalConfig()}
   visible: false
   variables:
   - tenancy_ocid
   - region
 
-- title: R-Studio Configuration
+- title: ${Messages.solutionsHub.solutions.rstudio.variableGroups.configurationTitle()}
   visible: true  
   variables:
     - rstudio_user
@@ -20,7 +20,7 @@ variableGroups:
 
 
 
-- title: Instance Configuration
+- title: ${Messages.solutionsHub.solutions.rstudio.variableGroups.instanceConfigurationTitle()}
   visible: 
       and:
         - show_advanced
@@ -34,7 +34,7 @@ variableGroups:
     - public_ssh_key
 
 
-- title: Network Configuration
+- title: ${Messages.solutionsHub.solutions.wordpress.variableGroups.networkConfigurationTitle()}
   visible: 
       and:
         - show_advanced
@@ -43,21 +43,21 @@ variableGroups:
      - vcn_cidr
 
 outputGroups:
-- title: Service Endpoints
+- title: ${Messages.solutionsHub.solutions.wordpress.outputGroups.serviceEndpointsTitle()}
   outputs:
     - rstudio_public_ip
-- title: Generated Passwords
+- title: ${Messages.solutionsHub.solutions.wordpress.outputGroups.generatedPasswordsTitle()}
   outputs:
     - generated_ssh_private_key
 
 outputs:
   rstudio_public_ip:
     type: link
-    title: RStudio Login
-    description: Open R-Studio
+    title: ${Messages.solutionsHub.solutions.wordpress.outputs.publicIpTitle()}
+    description: ${Messages.solutionsHub.solutions.wordpress.outputs.publicIpDescription()}
   generated_ssh_private_key:
-    title: "Generated SSH Private Key"
-    description: "Generated SSH Private Key"
+    title: ${Messages.solutionsHub.solutions.wordpress.outputs.generatedSshPrivateKeyTitle()}
+    description: ${Messages.solutionsHub.solutions.wordpress.outputs.generatedSshPrivateKeyDescription()}
     type: copyableString
     visible: true
 
@@ -67,8 +67,8 @@ variables:
 
   show_advanced:
     type: boolean
-    title: "Show advanced options?"
-    description: "Shows advanced options."
+    title: ${Messages.solutionsHub.solutions.wordpress.variables.showAdvancedTitle()}
+    description: ${Messages.solutionsHub.solutions.wordpress.variables.showAdvancedDescription()}
     visible: false
     default: false
 
@@ -76,9 +76,9 @@ variables:
 
   rstudio_user:
     type: string
-    required: false
-    title: "R-Studio username"
-    description: "The username to login to R-Studio."
+    required: true
+    title: ${Messages.solutionsHub.solutions.rstudio.variables.rstudioUserTitle()}
+    description: ${Messages.solutionsHub.solutions.rstudio.variables.rstudioUserDescription()}
     minLength: 2
     maxLength: 14
     pattern: "^[a-zA-Z][a-zA-Z0-9]+$"
@@ -87,10 +87,10 @@ variables:
 
   rstudio_password:
     type: password
-    required: false
-    title: "R-Studio password"
-    description: "Password for the R-Studio user above."
-    #pattern: "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()_+\\-=\\[\\]{};':\\\"\\\\|,.<>\\/?]).{8,32}$"
+    required: true
+    title: ${Messages.solutionsHub.solutions.rstudio.variables.rstudioPasswordTitle()}
+    description: ${Messages.solutionsHub.solutions.rstudio.variables.rstudioPasswordDescription()}
+    pattern: "^(?=.*[!@#%^*_+\\-:?.,\\[\\]\\{\\}])(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?!.*[$\\(\\)]).{8,32}$"
     visible: true
       
 
